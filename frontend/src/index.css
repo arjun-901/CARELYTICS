@@ -1,0 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* small custom in the correct layer */
+@layer base {
+  body {
+    @apply bg-gray-50;
+  }
+}
