@@ -1,0 +1,38 @@
+{
+  "version": 2,
+  "builds": [
+    { "src": "frontend/package.json", "use": "@vercel/static-build", "config": { "distDir": "dist" } },
+    { "src": "Admin/package.json", "use": "@vercel/static-build", "config": { "distDir": "dist" } },
+    { "src": "Hospitalsite/package.json", "use": "@vercel/static-build", "config": { "distDir": "dist" } }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "https://<YOUR_BACKEND_DOMAIN>/api/$1"
+    },
+
+    // Admin SPA routes -> serve built Admin app
+    { "src": "^/admin$", "dest": "/Admin/index.html" },
+    { "src": "^/admin/(.*)$", "dest": "/Admin/$1" },
+
+    // Hospital portal SPA routes -> serve built Hospitalsite app
+    { "src": "^/hospital$", "dest": "/Hospitalsite/index.html" },
+    { "src": "^/hospital/(.*)$", "dest": "/Hospitalsite/$1" },
+
+    // Fallback: everything else serves the main frontend SPA
+    { "handle": "filesystem" },
+    { "src": "^/.*$", "dest": "/frontend/index.html" }
+  ],
+
+  "env": {
+    // Runtime environment variable available to the frontend (client-side vars must be prefixed with VITE_)
+    "VITE_API_BASE": "https://<YOUR_BACKEND_DOMAIN>"
+  },
+
+  "build": {
+    "env": {
+      // Make sure the frontend is built with the correct API base
+      "VITE_API_BASE": "https://<YOUR_BACKEND_DOMAIN>"
+    }
+  }
+}

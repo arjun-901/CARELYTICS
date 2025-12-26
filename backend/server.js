@@ -10,7 +10,25 @@ const patientRoutes = require('./routes/patients')
 const userRoutes = require('./routes/users')
 
 const app = express()
-app.use(cors())
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  process.env.ADMIN_URL,
+  process.env.HOSPITAL_URL
+].filter(Boolean);
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.indexOf(origin) !== -1) {
+        return callback(null, true);
+      }
+      return callback(new Error('CORS policy: Origin not allowed'));
+    },
+    credentials: true,
+  })
+);
+
 app.use(express.json())
 
 const PORT = process.env.PORT || 5000

@@ -1,10 +1,11 @@
 import axios from "axios";
 import { io } from "socket.io-client";
 
-const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:5000";
+const API_BASE_RAW = import.meta.env.VITE_API_BASE || "http://localhost:5000";
+const API_BASE = API_BASE_RAW.replace(/\/$/, "") + "/api";
 
 export const axiosInstance = axios.create({
-  baseURL: API_BASE + "/api",
+  baseURL: API_BASE,
 });
 
 // User Authentication
@@ -90,7 +91,9 @@ export const fetchStatus = () => axiosInstance.get("/status");
 export const fetchHospitals = () => axiosInstance.get("/hospitals");
 
 // Socket.io client
-export const socket = io(API_BASE, { autoConnect: false });
+// Ensure socket connects to the server origin (strip any `/api` suffix)
+const SOCKET_ORIGIN = API_BASE_RAW.replace(/\/api\/?$/, "").replace(/\/$/, "")
+export const socket = io(SOCKET_ORIGIN, { autoConnect: false });
 
 export default {
   userSignup,

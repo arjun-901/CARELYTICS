@@ -5,6 +5,7 @@ import StatCard from "../components/StatCard";
 import AdmissionsChart from "../charts/AdmissionsChart";
 import RecoveryChart from "../charts/RecoveryChart";
 import PerformancePie from "../charts/PerformancePie";
+import { fetchAllHospitals } from "../services/api";
 
 export default function HospitalDetail() {
   const { hospitalId } = useParams();
@@ -26,12 +27,9 @@ export default function HospitalDetail() {
           return;
         }
 
-        const response = await fetch(`http://localhost:5000/api/hospitals`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        const data = await response.json();
-        
-        const found = data.find(h => h._id === hospitalId);
+        const resp = await fetchAllHospitals();
+        const data = resp?.data || resp;
+        const found = (Array.isArray(data) ? data : []).find(h => h._id === hospitalId);
         if (found) {
           setHospital(found);
           setError(null);
